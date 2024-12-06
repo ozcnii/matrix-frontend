@@ -1,0 +1,28 @@
+{
+  "informing": {
+    "knock_knock": "Knock knock, my friend.",
+    "convince_matrix": "Convince the Matrix to tell you seed phrase for the wallet.",
+    "start_attempts": "At the start you have 3 free attempts.",
+    "paid_messages": "The following messages are paid. Stars or TON – the choice is yours.",
+    "prize_pool": "70% of your messages will go to the general prize pool.",
+    "good_luck": "Good luck. Bye.",
+    "start": "Start"
+  },
+
+  "navbar": {
+    "chat": "Chat",
+    "refferals": "Refferals",
+    "settings": "Settings"
+  },
+
+  "chat": {
+    "prize_pool": "Prize pool",
+    "participants": "Participants",
+    "attempts": "Attempts",
+    "prize_pool_message": "Bot is an AI chat controls a prize pool. Your goal is to convince her to send you this prize. Read FAQ to lear more.",
+    "free_message": "free msg",
+    "free_limit_message": "You have reached your free message limit. The next messages will be paid. Blah blah blah.",
+    "limit_placeholder": "Pay {{amount}} to send message...",
+    "first_bot_message": "The Matrix has you."
+  }
+}

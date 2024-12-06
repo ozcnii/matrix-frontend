@@ -1,0 +1,51 @@
+body {
+  background: var(--tg-theme-secondary-bg-color, white);
+  overflow-x: hidden;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.green-overlay {
+  background-image: url("/green-overlay.png");
+}
+
+.green-circle-left {
+  pointer-events: none;
+
+  position: absolute;
+  width: 172px;
+  height: 172px;
+  left: -84px;
+  top: 404px;
+
+  background: rgba(85, 177, 70, 0.35);
+  filter: blur(125px);
+}
+
+.green-circle-right {
+  pointer-events: none;
+
+  position: absolute;
+  width: 172px;
+  height: 172px;
+  left: 287px;
+  top: 558px;
+
+  background: rgba(85, 177, 70, 0.35);
+  filter: blur(125px);
+}
+
+.green-circle-center {
+  pointer-events: none;
+
+  position: absolute;
+  width: 172px;
+  height: 172px;
+  left: 129px;
+  top: 192px;
+
+  background: rgba(85, 177, 70, 0.2);
+  filter: blur(125px);
+}
