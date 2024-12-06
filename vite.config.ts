@@ -11,6 +11,6 @@ export default defineConfig({
   ],
   publicDir: "./public",
   server: {
-    // host: true,
+    host: true,
   },
 });

@@ -1,7 +1,7 @@
 import { RightArrowIcon } from "@/modules/common/icons/right-arrow-icon";
-import { Button } from "@telegram-apps/telegram-ui";
 import { Message } from "../hooks/use-chat";
 import { useTranslation } from "react-i18next";
+import { Button } from "@/modules/common/ui/button";
 
 export const ChatForm = ({
   messageValue,
