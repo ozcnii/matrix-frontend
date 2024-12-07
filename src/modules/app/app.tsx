@@ -23,7 +23,7 @@ export function App() {
       appearance={isDark ? "dark" : "light"}
       platform={["macos", "ios"].includes(lp.platform) ? "ios" : "base"}
     >
-      <BrowserRouter>
+      <BrowserRouter basename="matrix">
         <Layout showNavbar={!!informed}>
           <Routes>
             {routes.map((route) => (

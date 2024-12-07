@@ -34,5 +34,18 @@
     "claim_button": "Claim",
     "claimed_button": "Claimed",
     "invite_button": "Invite a friends"
+  },
+
+  "settings": {
+    "header": "Settings",
+    "select_payment_option": "Select payment option",
+    "to_pay_in_ton": "To pay in TON, connect your wallet",
+    "connect_wallet_button": "Connect Wallet",
+    "disconnect_wallet_button": "Disconnect",
+    "change_language": "Change language",
+    "languages": {
+      "english": "English",
+      "russian": "Russian"
+    }
   }
 }

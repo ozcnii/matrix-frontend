@@ -34,5 +34,18 @@
     "claim_button": "Получить",
     "claimed_button": "Получено",
     "invite_button": "Пригласить друзей"
+  },
+
+  "settings": {
+    "header": "Настройки",
+    "select_payment_option": "Выберите способ оплаты",
+    "to_pay_in_ton": "Для оплаты в TON подключите ваш кошелек",
+    "connect_wallet_button": "Подключить кошелек",
+    "disconnect_wallet_button": "Отключить",
+    "change_language": "Сменить язык",
+    "languages": {
+      "english": "Английский",
+      "russian": "Русский"
+    }
   }
 }
