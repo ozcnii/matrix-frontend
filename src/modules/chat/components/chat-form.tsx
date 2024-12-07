@@ -1,7 +1,8 @@
 import { RightArrowIcon } from "@/modules/common/icons/right-arrow-icon";
-import { Message } from "../hooks/use-chat";
+
 import { useTranslation } from "react-i18next";
 import { Button } from "@/modules/common/ui/button";
+import { Message } from "../stores/chat-store";
 
 export const ChatForm = ({
   messageValue,

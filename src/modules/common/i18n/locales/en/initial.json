@@ -24,5 +24,15 @@
     "free_limit_message": "You have reached your free message limit. The next messages will be paid. Blah blah blah.",
     "limit_placeholder": "Pay {{amount}} to send message...",
     "first_bot_message": "The Matrix has you."
+  },
+
+  "refferals": {
+    "header": "Refferals",
+    "title": "Refferals",
+    "instruction": "For each referral you will receive something.",
+    "earned": "You earned",
+    "claim_button": "Claim",
+    "claimed_button": "Claimed",
+    "invite_button": "Invite a friends"
   }
 }

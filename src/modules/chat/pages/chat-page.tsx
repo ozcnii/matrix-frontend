@@ -27,12 +27,16 @@ export const ChatPage = () => {
     userMessages,
     messagesLimit,
     loading,
+    chatEndRef,
+    scrollToBottom,
   } = useChat();
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <header className="text-center py-5 border-b border-white/20">
-        <h2 className="text-white"> {t("chat.prize_pool")}: $12,985.12</h2>
+        <h2 className="text-white text-lg font-bold">
+          {t("chat.prize_pool")}: $12,985.12
+        </h2>
         <p className="mt-2 text-sm text-[#BEBEBE]">
           330 {t("chat.participants")} · 819 {t("chat.attempts")}
         </p>
@@ -50,7 +54,9 @@ export const ChatPage = () => {
             <Spinner size="l" className="text-[#55B146]" />
           </div>
         ) : (
-          <MessageList messages={messages} />
+          <MessageList messages={messages} scrollToBottom={scrollToBottom}>
+            <div ref={chatEndRef} />
+          </MessageList>
         )}
       </section>
 

@@ -1,6 +1,13 @@
+html {
+  overflow: hidden;
+  height: 100%;
+}
+
 body {
+  height: 100%;
+  overflow: auto;
   background: var(--tg-theme-secondary-bg-color, white);
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 }
 
 @tailwind base;

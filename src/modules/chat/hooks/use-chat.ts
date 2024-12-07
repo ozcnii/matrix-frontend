@@ -1,92 +1,64 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { chatService } from "../api/chat-service";
-
-export type Message = {
-  text: string;
-  from: "user" | "bot";
-  id: number;
-  isNew: boolean;
-};
+import { useChatStore } from "../stores/chat-store";
 
 export const useChat = () => {
   const { t } = useTranslation();
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const [loading, setLoading] = useState(true);
-  const [waitAnswer, setWaitAnswer] = useState(false);
-
-  const [messagesLimit] = useState(3);
-  const [messageValue, setMessageValue] = useState("");
-
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      text: t("chat.first_bot_message"),
-      from: "bot",
-      id: -1,
-      isNew: true,
-    },
-  ]);
+  const {
+    addMessage,
+    messages,
+    currentMessageValue,
+    setCurrentMessageValue,
+    fetchMessages,
+    loading,
+    messagesLimit,
+    waitAnswer,
+    markAllMessagesAsRead,
+  } = useChatStore();
 
   const userMessages = messages.filter((message) => message.from === "user");
 
   const messagesLimitReached = userMessages.length >= messagesLimit;
 
   const messageButtonDisabled =
-    !messageValue || messagesLimitReached || waitAnswer || loading;
+    !currentMessageValue || messagesLimitReached || waitAnswer || loading;
 
-  const pushMessage = (message: Message) => {
-    setMessages((messages) => [...messages, message]);
-  };
-
-  const addMessage = (text: string) => {
-    pushMessage({
-      text,
-      from: "user",
-      id: userMessages.length,
-      isNew: true,
-    });
-    setMessageValue("");
-    sendMessage();
-  };
-
-  const sendMessage = () => {
-    setWaitAnswer(true);
-    chatService.sendMessage(messageValue).then((answer) => {
-      pushMessage({
-        text: answer,
+  useEffect(() => {
+    if (!messages.length) {
+      fetchMessages({
+        text: t("chat.first_bot_message"),
         from: "bot",
         id: Date.now(),
         isNew: true,
-      });
-      setWaitAnswer(false);
-    });
-  };
+      }).then(scrollToBottom);
+    }
 
-  useEffect(() => {
-    chatService.getMessages().then((messages) => {
-      setMessages([
-        {
-          text: t("chat.first_bot_message"),
-          from: "bot",
-          id: -1,
-          isNew: false,
-        },
-        ...messages,
-      ]);
-
-      setLoading(false);
-    });
+    return () => {
+      markAllMessagesAsRead();
+    };
   }, []);
+
+  const scrollToBottom = useCallback(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, []);
+
+  const addMessageWrapper = (text: string) => {
+    addMessage(text).then(scrollToBottom);
+  };
 
   return {
     messages,
-    addMessage,
-    messageValue,
-    setMessageValue,
+    addMessage: addMessageWrapper,
+    messageValue: currentMessageValue,
+    setMessageValue: setCurrentMessageValue,
     messageButtonDisabled,
     messagesLimitReached,
     messagesLimit,
     userMessages,
     loading,
+    chatEndRef,
+    scrollToBottom,
   };
 };

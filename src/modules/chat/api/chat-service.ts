@@ -1,4 +1,4 @@
-import { Message } from "../hooks/use-chat";
+import { Message } from "../stores/chat-store";
 
 export const chatService = {
   sendMessage: async (message: string) => {
@@ -10,8 +10,8 @@ export const chatService = {
       "messages",
       JSON.stringify([
         ...JSON.parse(localStorage.getItem("messages") || "[]"),
-        { from: "user", text: message },
-        { from: "bot", text: answer },
+        { from: "user", text: message, id: Date.now() },
+        { from: "bot", text: answer, id: Date.now() + 1 },
       ])
     );
 
