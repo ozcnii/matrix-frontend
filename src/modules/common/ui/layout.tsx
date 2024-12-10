@@ -33,7 +33,7 @@ export const Layout = ({
   ];
 
   return (
-    <div className="h-dvh overflow-hidden w-full bg-black text-[#55B146] font-mono flex flex-col relative">
+    <div className="h-screen overflow-hidden w-full bg-black text-[#55B146] font-mono flex flex-col relative">
       <div className="green-circle-left" />
       <div className="green-circle-center" />
       <div className="green-circle-right" />
