@@ -1,7 +1,7 @@
 import { Button } from "@/modules/common/ui/button";
+import { TypingText } from "@/modules/common/ui/typing-text";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { TypeAnimation } from "react-type-animation";
 import { Fragment } from "react/jsx-runtime";
 
 export const InformingStep = ({ next }: { next: () => void }) => {
@@ -23,13 +23,14 @@ export const InformingStep = ({ next }: { next: () => void }) => {
         (content, index) =>
           step >= index && (
             <Fragment key={index}>
-              <TypeAnimation
-                sequence={[content, 1000, () => setStep((s) => s + 1)]}
-                cursor={false}
-                speed={75}
+              <TypingText
+                text={content}
+                onAnimationComplete={() => {
+                  setTimeout(() => {
+                    setStep((s) => s + 1);
+                  }, 1000);
+                }}
               />
-              <br />
-              <br />
             </Fragment>
           )
       )}

@@ -1,7 +1,7 @@
+import { TypingText } from "@/modules/common/ui/typing-text";
 import { Button } from "@/modules/common/ui/button";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { TypeAnimation } from "react-type-animation";
 
 export const LanguageSelectionStep = ({ next }: { next: () => void }) => {
   const { i18n } = useTranslation();
@@ -14,14 +14,11 @@ export const LanguageSelectionStep = ({ next }: { next: () => void }) => {
 
   return (
     <>
-      <TypeAnimation
-        sequence={[
-          "Select the language you want to continue in.",
-          () => setAnimationFinished(true),
-        ]}
-        cursor={false}
-        speed={75}
+      <TypingText
+        text="Select the language you want to continue in."
+        onAnimationComplete={() => setAnimationFinished(true)}
       />
+
       {animationFinished && (
         <div className="flex gap-3 justify-center">
           <Button onClick={() => changeLanguage("en")} className="w-full">

@@ -1,6 +1,6 @@
-import { TypeAnimation } from "react-type-animation";
 import { Message } from "../stores/chat-store";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
+import { TypingText } from "@/modules/common/ui/typing-text";
 
 export const MessageList = ({
   messages,
@@ -19,8 +19,7 @@ export const MessageList = ({
           className={`${
             (from === "user"
               ? "self-end text-white text-right"
-              : "self-start text-left") +
-            " max-w-[80%] break-words whitespace-pre-wrap"
+              : "self-start text-left") + " max-w-[80%] break-words "
           }`}
           style={{
             filter: from === "user" ? "drop-shadow(0 0 10px #55B146)" : "none",
@@ -48,28 +47,11 @@ const ScrollableTypeAnimation = ({
   text: string;
   scrollToBottom: () => void;
 }) => {
-  const words = text.split(" ").map((word) => word + " ");
-
-  const [count, setCount] = useState(0);
-
-  const onWordDone = () => {
-    scrollToBottom();
-    setCount((c) => c + 1);
-  };
-
   return (
-    <>
-      {words.map(
-        (word, index) =>
-          count >= index && (
-            <TypeAnimation
-              key={index}
-              sequence={[word, onWordDone]}
-              cursor={false}
-              speed={75}
-            />
-          )
-      )}
-    </>
+    <TypingText
+      text={text}
+      onWordTyped={scrollToBottom}
+      wrapperClassName="!justify-start"
+    />
   );
 };
