@@ -11,7 +11,7 @@
 
   "navbar": {
     "chat": "Chat",
-    "refferals": "Refferals",
+    "referrals": "Referrals",
     "settings": "Settings"
   },
 
@@ -26,9 +26,9 @@
     "first_bot_message": "The Matrix has you."
   },
 
-  "refferals": {
-    "header": "Refferals",
-    "title": "Refferals",
+  "referrals": {
+    "header": "Referrals",
+    "title": "Referrals",
     "instruction": "For each referral you will receive something.",
     "earned": "You earned",
     "claim_button": "Claim",

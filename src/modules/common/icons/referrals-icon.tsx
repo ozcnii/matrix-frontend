@@ -1,4 +1,4 @@
-export const RefferalsIcon = ({
+export const ReferralsIcon = ({
   className,
   h = "26",
   w = "27",

@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html {
   overflow: hidden;
   height: 100%;
@@ -5,14 +9,11 @@ html {
 
 body {
   height: 100%;
-  overflow: auto;
   background: var(--tg-theme-secondary-bg-color, white);
-  /* overflow-x: hidden; */
+  color: var(--tg-theme-text-color, black);
+  position: relative;
+  overflow-x: hidden;
 }
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 .green-overlay {
   background-image: url("/green-overlay.png");

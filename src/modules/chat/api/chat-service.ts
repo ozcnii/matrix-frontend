@@ -1,16 +1,35 @@
+import { api } from "@/modules/common/api";
 import { Message } from "../stores/chat-store";
 
 export const chatService = {
-  sendMessage: async (message: string) => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
+  askQuestion: async ({
+    question,
+    userId,
+  }: {
+    question: string;
+    userId: number;
+  }) => {
+    const sum = [...userId.toString()]
+      .map(Number)
+      .reduce((prev, acc) => prev + acc, 0);
 
-    const answer = "some bot answer on " + message + "...";
+    const { data } = await api.post<{ response: string }>(
+      "/ask_question",
+      { question, task_id: sum % 3 },
+      {
+        headers: {
+          userid: userId,
+        },
+      }
+    );
+
+    const answer = data.response;
 
     localStorage.setItem(
       "messages",
       JSON.stringify([
         ...JSON.parse(localStorage.getItem("messages") || "[]"),
-        { from: "user", text: message, id: Date.now() },
+        { from: "user", text: question, id: Date.now() },
         { from: "bot", text: answer, id: Date.now() + 1 },
       ])
     );

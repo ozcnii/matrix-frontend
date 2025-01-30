@@ -1,12 +1,15 @@
-import { RefferalsIcon } from "@/modules/common/icons/refferals-icon";
+import { ReferralsIcon } from "@/modules/common/icons/referrals-icon";
 import { Button } from "@/modules/common/ui/button";
 import { useTranslation } from "react-i18next";
 import { openTelegramLink } from "@telegram-apps/sdk-react";
 import { useEffect, useState } from "react";
 import { SuccessIcon } from "@/modules/common/icons/success-icon";
 
-export const RefferalsPage = () => {
-  const inviteLink = "https://t.me/matrix_example_bot?start=true";
+const botLink =
+  import.meta.env.VITE_BOT_LINK || "https://t.me/matrix_example_bot";
+
+export const ReferralsPage = () => {
+  const inviteLink = botLink + "?start=true";
   const inviteLinkUrl = "https://t.me/share/url?url=" + inviteLink;
 
   const [claimed, setClaimed] = useState(false);
@@ -26,17 +29,17 @@ export const RefferalsPage = () => {
     <div className="flex flex-col h-full overflow-hidden">
       <header className="text-center py-5 border-b border-white/20">
         <h2 className="text-white text-lg font-bold">
-          {t("refferals.header")}
+          {t("referrals.header")}
         </h2>
       </header>
 
       <section className="p-4 flex flex-col h-full overflow-auto gap-4">
         <div className="text-center">
-          <h3 className="text-white text-lg">{t("refferals.title")}: 20</h3>
-          <p className="text-[#bebebe]">{t("refferals.instruction")}</p>
+          <h3 className="text-white text-lg">{t("referrals.title")}: 20</h3>
+          <p className="text-[#bebebe]">{t("referrals.instruction")}</p>
           <br />
           <p className="text-white font-bold">
-            {t("refferals.earned")}: 0.22 TON
+            {t("referrals.earned")}: 0.22 TON
           </p>
         </div>
 
@@ -49,20 +52,20 @@ export const RefferalsPage = () => {
           {claimed ? (
             <div className="flex gap-2 items-center">
               <SuccessIcon />
-              {t("refferals.claimed_button")}
+              {t("referrals.claimed_button")}
             </div>
           ) : (
-            t("refferals.claim_button")
+            t("referrals.claim_button")
           )}
         </Button>
 
         <Button
           size="l"
           className="[&>span]:text-sm"
-          before={<RefferalsIcon h={18} w={18} />}
+          before={<ReferralsIcon h={18} w={18} />}
           onClick={() => openTelegramLink(inviteLinkUrl)}
         >
-          {t("refferals.invite_button")}
+          {t("referrals.invite_button")}
         </Button>
       </section>
     </div>

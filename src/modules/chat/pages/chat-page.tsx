@@ -29,6 +29,7 @@ export const ChatPage = () => {
     loading,
     chatEndRef,
     scrollToBottom,
+    animationCompleteHandler,
   } = useChat();
 
   return (
@@ -54,7 +55,11 @@ export const ChatPage = () => {
             <Spinner size="l" className="text-[#55B146]" />
           </div>
         ) : (
-          <MessageList messages={messages} scrollToBottom={scrollToBottom}>
+          <MessageList
+            messages={messages}
+            scrollToBottom={scrollToBottom}
+            animationCompleteHandler={animationCompleteHandler}
+          >
             <div ref={chatEndRef} />
           </MessageList>
         )}

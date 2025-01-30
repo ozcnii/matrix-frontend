@@ -6,10 +6,12 @@ export const MessageList = ({
   messages,
   children,
   scrollToBottom,
+  animationCompleteHandler,
 }: {
   messages: Message[];
   children: ReactNode;
   scrollToBottom: () => void;
+  animationCompleteHandler: () => void;
 }) => {
   return (
     <div className="flex flex-col h-full overflow-y-auto overflow-hidden gap-4">
@@ -28,7 +30,8 @@ export const MessageList = ({
           {from === "bot" && isNew ? (
             <ScrollableTypeAnimation
               text={text}
-              scrollToBottom={scrollToBottom}
+              onWordTyped={scrollToBottom}
+              onAnimationComplete={animationCompleteHandler}
             />
           ) : (
             text
@@ -42,16 +45,19 @@ export const MessageList = ({
 
 const ScrollableTypeAnimation = ({
   text,
-  scrollToBottom,
+  onWordTyped,
+  onAnimationComplete,
 }: {
   text: string;
-  scrollToBottom: () => void;
+  onWordTyped: () => void;
+  onAnimationComplete?: () => void;
 }) => {
   return (
     <TypingText
       text={text}
-      onWordTyped={scrollToBottom}
+      onWordTyped={onWordTyped}
       wrapperClassName="!justify-start"
+      onAnimationComplete={onAnimationComplete}
     />
   );
 };

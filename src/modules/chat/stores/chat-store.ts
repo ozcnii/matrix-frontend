@@ -14,14 +14,18 @@ type ChatState = {
   loading: boolean;
   waitAnswer: boolean;
   messagesLimit: number;
-  addMessage: (text: string) => Promise<void>;
-  pushMessage: (message: Message) => void;
+  askQuestion: (params: {
+    question: string;
+    userId: number;
+    onMessageAdded: () => void;
+  }) => Promise<void>;
   setCurrentMessageValue: (text: string) => void;
   fetchMessages: (initialMessage: Message) => Promise<void>;
   markAllMessagesAsRead: () => void;
+  animationCompleteHandler: () => void;
 };
 
-export const useChatStore = create<ChatState>((set, get) => ({
+export const useChatStore = create<ChatState>((set) => ({
   currentMessageValue: "",
   messages: [],
   loading: true,
@@ -30,46 +34,61 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   setCurrentMessageValue: (text) => set({ currentMessageValue: text }),
 
-  addMessage: async (text: string) => {
-    const { pushMessage } = get();
-
-    pushMessage({
-      text,
-      from: "user",
-      id: Date.now(),
-      isNew: true,
-    });
-
-    set({
-      currentMessageValue: "",
-      waitAnswer: true,
-    });
-
-    const answer = await chatService.sendMessage(text);
-
-    pushMessage({
-      text: answer,
-      from: "bot",
-      id: Date.now(),
-      isNew: true,
-    });
-
-    set({
-      waitAnswer: false,
-    });
-  },
-
-  pushMessage: (message: Message) => {
+  askQuestion: async ({
+    question,
+    userId,
+    onMessageAdded,
+  }: {
+    question: string;
+    userId: number;
+    onMessageAdded: () => void;
+  }) => {
     set((state) => ({
-      messages: [...state.messages, message],
+      messages: [
+        ...state.messages,
+        {
+          text: question,
+          from: "user",
+          id: Date.now(),
+          isNew: true,
+        },
+      ],
     }));
+
+    // wait for the message to be added to DOM
+    setTimeout(onMessageAdded, 0);
+
+    set({ currentMessageValue: "", waitAnswer: true });
+
+    try {
+      const answer = await chatService.askQuestion({ question, userId });
+
+      set((state) => ({
+        messages: [
+          ...state.messages,
+          {
+            text: answer,
+            from: "bot",
+            id: Date.now(),
+            isNew: true,
+          },
+        ],
+      }));
+    } catch (error) {
+      console.error(error);
+
+      set((state) => ({
+        messages: state.messages.slice(0, state.messages.length - 1),
+      }));
+
+      throw error;
+    }
   },
 
   fetchMessages: async (initialMessage: Message) => {
     set({ loading: true });
     const messages = await chatService.getMessages();
     initialMessage.isNew = messages.length === 0;
-
     set({ messages: [initialMessage, ...messages], loading: false });
   },
 
@@ -78,4 +97,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
       messages: messages.map((message) => ({ ...message, isNew: false })),
     }));
   },
+
+  animationCompleteHandler: () => set({ waitAnswer: false }),
 }));

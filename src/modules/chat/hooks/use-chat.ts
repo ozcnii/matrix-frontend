@@ -1,13 +1,16 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useChatStore } from "../stores/chat-store";
+import { initData, useSignal } from "@telegram-apps/sdk-react";
+import { toast } from "react-toastify";
 
 export const useChat = () => {
   const { t } = useTranslation();
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const user = useSignal(initData.user);
 
   const {
-    addMessage,
+    askQuestion,
     messages,
     currentMessageValue,
     setCurrentMessageValue,
@@ -16,6 +19,7 @@ export const useChat = () => {
     messagesLimit,
     waitAnswer,
     markAllMessagesAsRead,
+    animationCompleteHandler,
   } = useChatStore();
 
   const userMessages = messages.filter((message) => message.from === "user");
@@ -44,13 +48,22 @@ export const useChat = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, []);
 
-  const addMessageWrapper = (text: string) => {
-    addMessage(text).then(scrollToBottom);
+  const addMessage = async (message: string) => {
+    try {
+      await askQuestion({
+        question: message,
+        userId: user!.id,
+        onMessageAdded: scrollToBottom,
+      });
+    } catch (error) {
+      console.error(error);
+      toast(String(error));
+    }
   };
 
   return {
     messages,
-    addMessage: addMessageWrapper,
+    addMessage,
     messageValue: currentMessageValue,
     setMessageValue: setCurrentMessageValue,
     messageButtonDisabled,
@@ -60,5 +73,6 @@ export const useChat = () => {
     loading,
     chatEndRef,
     scrollToBottom,
+    animationCompleteHandler,
   };
 };

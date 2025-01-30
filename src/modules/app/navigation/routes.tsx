@@ -1,7 +1,7 @@
 import { InformingPage } from "@/modules/informing/pages/informing-page";
 import { ChatPage } from "@/modules/chat/pages/chat-page";
 import { RouteProps } from "react-router-dom";
-import { RefferalsPage } from "@/modules/refferals/pages/refferals-page";
+import { ReferralsPage } from "@/modules/referrals/pages/referrals-page";
 import { SettingsPage } from "@/modules/settings/pages/settings-page";
 
 export const routes: RouteProps[] = [
@@ -18,8 +18,8 @@ export const routes: RouteProps[] = [
     element: <ChatPage />,
   },
   {
-    path: "/refferals",
-    element: <RefferalsPage />,
+    path: "/referrals",
+    element: <ReferralsPage />,
   },
   {
     path: "/settings",

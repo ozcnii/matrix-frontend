@@ -50,6 +50,11 @@ export const ChatForm = ({
             openLimitMessageBox();
           }
         }}
+        onFocus={() => {
+          if (messagesLimitReached) {
+            openLimitMessageBox();
+          }
+        }}
         disabled={loading}
         placeholder={messageInputPlaceholder}
         className="text-white placeholder-white/20 w-full px-2 bg-transparent rounded border border-solid border-white/20 disabled:cursor-default disabled:opacity-35"

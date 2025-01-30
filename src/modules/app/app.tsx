@@ -6,6 +6,7 @@ import { Watcher } from "./watcher";
 import { Layout } from "../common/ui/layout";
 import { useInformed } from "../common/contexts/informed";
 import { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
 
 export function App() {
   const lp = useLaunchParams();
@@ -32,6 +33,7 @@ export function App() {
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
           <Watcher />
+          <ToastContainer />
         </Layout>
       </BrowserRouter>
     </AppRoot>
