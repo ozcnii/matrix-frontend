@@ -1,33 +1,19 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useChatStore } from "../stores/chat-store";
 import { initData, useSignal } from "@telegram-apps/sdk-react";
 import { toast } from "react-toastify";
+import { useMessages } from "../stores/use-messages";
 
 export const useChat = () => {
   const { t } = useTranslation();
   const chatEndRef = useRef<HTMLDivElement>(null);
   const user = useSignal(initData.user);
 
-  const {
-    askQuestion,
-    messages,
-    currentMessageValue,
-    setCurrentMessageValue,
-    fetchMessages,
-    loading,
-    messagesLimit,
-    waitAnswer,
-    markAllMessagesAsRead,
-    animationCompleteHandler,
-  } = useChatStore();
+  const { messages, sendMessage, markMessagesAsRead, fetchMessages } =
+    useMessages();
 
-  const userMessages = messages.filter((message) => message.from === "user");
-
-  const messagesLimitReached = userMessages.length >= messagesLimit;
-
-  const messageButtonDisabled =
-    !currentMessageValue || messagesLimitReached || waitAnswer || loading;
+  const [messageValue, setMessageValue] = useState("");
+  const [isAwaitingAnswer, setIsAwaitingAnswer] = useState(false);
 
   useEffect(() => {
     if (!messages.length) {
@@ -40,7 +26,7 @@ export const useChat = () => {
     }
 
     return () => {
-      markAllMessagesAsRead();
+      markMessagesAsRead();
     };
   }, []);
 
@@ -48,10 +34,16 @@ export const useChat = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, []);
 
-  const addMessage = async (message: string) => {
+  const animationCompleteHandler = () => {
+    setIsAwaitingAnswer(false);
+  };
+
+  const sendMessageHandler = async (message: string) => {
+    setMessageValue("");
+    setIsAwaitingAnswer(true);
     try {
-      await askQuestion({
-        question: message,
+      await sendMessage({
+        message,
         userId: user!.id,
         onMessageAdded: scrollToBottom,
       });
@@ -62,17 +54,12 @@ export const useChat = () => {
   };
 
   return {
-    messages,
-    addMessage,
-    messageValue: currentMessageValue,
-    setMessageValue: setCurrentMessageValue,
-    messageButtonDisabled,
-    messagesLimitReached,
-    messagesLimit,
-    userMessages,
-    loading,
+    sendMessage: sendMessageHandler,
+    messageValue,
+    setMessageValue,
     chatEndRef,
     scrollToBottom,
     animationCompleteHandler,
+    isAwaitingAnswer,
   };
 };

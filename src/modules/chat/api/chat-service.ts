@@ -1,12 +1,12 @@
 import { api } from "@/modules/common/api";
-import { Message } from "../stores/chat-store";
+import { Message } from "../stores/use-messages";
 
 export const chatService = {
-  askQuestion: async ({
-    question,
+  sendMessage: async ({
+    message,
     userId,
   }: {
-    question: string;
+    message: string;
     userId: number;
   }) => {
     const sum = [...userId.toString()]
@@ -15,7 +15,7 @@ export const chatService = {
 
     const { data } = await api.post<{ response: string }>(
       "/ask_question",
-      { question, task_id: sum % 3 },
+      { question: message, task_id: sum % 3 },
       {
         headers: {
           userid: userId,
@@ -29,7 +29,7 @@ export const chatService = {
       "messages",
       JSON.stringify([
         ...JSON.parse(localStorage.getItem("messages") || "[]"),
-        { from: "user", text: question, id: Date.now() },
+        { from: "user", text: message, id: Date.now() },
         { from: "bot", text: answer, id: Date.now() + 1 },
       ])
     );

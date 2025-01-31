@@ -1,4 +1,4 @@
-import { Message } from "../stores/chat-store";
+import { Message } from "../stores/use-messages";
 import { ReactNode } from "react";
 import { TypingText } from "@/modules/common/ui/typing-text";
 
