@@ -68,6 +68,7 @@ export const ChatPage = () => {
           isAwaitingAnswer={isAwaitingAnswer}
           setMessageValue={setMessageValue}
           openLimitMessageBox={openLimitMessageBox}
+          closeLimitMessageBox={onCloseLimitMessageBox}
           sendMessage={sendMessage}
         />
       </div>

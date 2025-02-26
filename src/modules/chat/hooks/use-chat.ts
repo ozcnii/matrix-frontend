@@ -18,11 +18,16 @@ export const useChat = () => {
   useEffect(() => {
     if (!messages.length) {
       fetchMessages({
-        text: t("chat.first_bot_message"),
-        from: "bot",
-        id: Date.now(),
-        isNew: true,
-      }).then(scrollToBottom);
+        initialMessage: {
+          text: t("chat.first_bot_message"),
+          from: "bot",
+          id: Date.now(),
+          isNew: true,
+        },
+        userId: user?.id || 0,
+      }).then(() => scrollToBottom());
+    } else {
+      scrollToBottom(false);
     }
 
     return () => {
@@ -30,8 +35,11 @@ export const useChat = () => {
     };
   }, []);
 
-  const scrollToBottom = useCallback(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  const scrollToBottom = useCallback((withSmooth = true) => {
+    chatEndRef.current?.scrollIntoView({
+      behavior: withSmooth ? "smooth" : "instant",
+      block: "end",
+    });
   }, []);
 
   const animationCompleteHandler = () => {

@@ -2,22 +2,37 @@ import { useTranslation } from "react-i18next";
 import { RightArrowIcon } from "@/modules/common/icons/right-arrow-icon";
 import { Button } from "@/modules/common/ui/button";
 import { useMessages } from "../stores/use-messages";
+import { FormEvent, useState } from "react";
+import { openInvoice } from "@telegram-apps/sdk-react";
+import { toast } from "react-toastify";
+import { api } from "@/modules/common/api";
 
 export const ChatForm = ({
   isAwaitingAnswer,
   messageValue,
   setMessageValue,
   openLimitMessageBox,
+  closeLimitMessageBox,
   sendMessage,
 }: {
   isAwaitingAnswer: boolean;
   messageValue: string;
   setMessageValue: (value: string) => void;
   openLimitMessageBox: () => void;
+  closeLimitMessageBox: () => void;
   sendMessage: (message: string) => void;
 }) => {
   const { t } = useTranslation();
-  const { isFetchingMessages, messages, messagesLimit } = useMessages();
+  const {
+    isFetchingMessages,
+    messages,
+    messagesLimit,
+    incrementMessagesLimit,
+  } = useMessages();
+
+  const [isStarsPaymentLinkLoading, setIsStarsPaymentLinkLoading] =
+    useState(false);
+  const [starsPaymentLink, setStarsPaymentLink] = useState<string | null>(null);
 
   const userMessages = messages.filter((message) => message.from === "user");
   const isMessagesLimitReached = userMessages.length >= messagesLimit;
@@ -40,14 +55,62 @@ export const ChatForm = ({
     }
   };
 
+  const telegramStarsPaymentHandler = async () => {
+    const link = await fetchStarsPaymentLink();
+
+    if (!link) {
+      return;
+    }
+
+    const status = await openInvoice(link, "url");
+
+    if (status === "paid") {
+      toast(t("payment.success"));
+      incrementMessagesLimit();
+      closeLimitMessageBox();
+    } else if (status === "error" || status === "failed") {
+      // TODO: add retries limit and after show error (+ i18n)
+      // telegramStarsPaymentHandler();
+      toast(t("payment.invoice_error"));
+    } else if (status === "cancelled") {
+      return;
+    } else {
+      toast(t("payment.unknown_status", { status }));
+    }
+  };
+
+  const fetchStarsPaymentLink = async () => {
+    if (starsPaymentLink) {
+      return starsPaymentLink;
+    }
+
+    setIsStarsPaymentLinkLoading(true);
+
+    try {
+      const response = await api.get<string>("get_invoice_link");
+      setStarsPaymentLink(response.data);
+      return response.data;
+    } catch (error) {
+      toast(t("payment.get_link_error"));
+      return null;
+    } finally {
+      setIsStarsPaymentLinkLoading(false);
+    }
+  };
+
+  const submitHandler = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (isMessagesLimitReached) {
+      telegramStarsPaymentHandler();
+      return;
+    }
+
+    sendMessage(messageValue);
+  };
+
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        sendMessage(messageValue);
-      }}
-      className="flex gap-4"
-    >
+    <form onSubmit={submitHandler} className="flex gap-4">
       <input
         type="text"
         value={messageValue}
@@ -60,13 +123,24 @@ export const ChatForm = ({
         placeholder={messageInputPlaceholder}
         className="text-white placeholder-white/20 w-full px-2 bg-transparent rounded border border-solid border-white/20 disabled:cursor-default disabled:opacity-35"
       />
-      <Button
-        type="submit"
-        disabled={isSendMessageButtonDisabled}
-        className="h-12 w-12 text-white/20"
-      >
-        <RightArrowIcon />
-      </Button>
+
+      {isMessagesLimitReached ? (
+        <Button
+          type="submit"
+          loading={isStarsPaymentLinkLoading}
+          className="h-12 w-12 text-white/20"
+        >
+          $
+        </Button>
+      ) : (
+        <Button
+          type="submit"
+          disabled={isSendMessageButtonDisabled}
+          className="h-12 w-12 text-white/20"
+        >
+          <RightArrowIcon />
+        </Button>
+      )}
     </form>
   );
 };

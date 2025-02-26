@@ -3,7 +3,6 @@ import { Button } from "@/modules/common/ui/button";
 import { Checkbox } from "@/modules/common/ui/checkbox";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-
 import StarsIcon from "@/modules/common/assets/tg-stars-icon.png";
 import TonIcon from "@/modules/common/assets/ton-icon.png";
 import { DisconnectIcon } from "@/modules/common/icons/disconnect-icon";
@@ -11,9 +10,7 @@ import { useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
 
 export const SettingsPage = () => {
   const { t, i18n } = useTranslation();
-
   const [tonConnectUI] = useTonConnectUI();
-
   const wallet = useTonWallet();
 
   const [paymentOption, setPaymentOption] = useState<"stars" | "ton">("stars");

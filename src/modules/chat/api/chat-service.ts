@@ -25,20 +25,52 @@ export const chatService = {
 
     const answer = data.response;
 
-    localStorage.setItem(
-      "messages",
-      JSON.stringify([
-        ...JSON.parse(localStorage.getItem("messages") || "[]"),
-        { from: "user", text: message, id: Date.now() },
-        { from: "bot", text: answer, id: Date.now() + 1 },
-      ])
-    );
-
     return answer;
   },
 
-  getMessages: async (): Promise<Message[]> => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    return JSON.parse(localStorage.getItem("messages") || "[]");
+  getMessages: async ({
+    userId,
+  }: {
+    userId: number;
+  }): Promise<{ messages: Message[]; messagesLimit: number }> => {
+    const response = await api.get<{
+      msgs: (
+        | {
+            user: string;
+            id: number;
+          }
+        | { system: string; id: number }
+      )[];
+      free_msgs: number;
+    }>("/riddle_history/1", {
+      headers: { userid: userId },
+    });
+
+    const messages: Message[] = [];
+
+    response.data.msgs.forEach((message) => {
+      if ("system" in message) {
+        messages.push({
+          from: "bot",
+          id: message.id,
+          isNew: false,
+          text: message.system,
+        });
+      }
+
+      if ("user" in message) {
+        messages.push({
+          from: "user",
+          id: message.id,
+          isNew: false,
+          text: message.user,
+        });
+      }
+    });
+
+    return {
+      messages,
+      messagesLimit: response.data.free_msgs,
+    };
   },
 };

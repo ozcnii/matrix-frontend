@@ -47,5 +47,12 @@
       "english": "English",
       "russian": "Russian"
     }
+  },
+
+  "payment": {
+    "success": "Payment was successful",
+    "unknown_status": "Unknown payment status (${{status}}). Please try again",
+    "get_link_error": "Error creating payment. Please try again",
+    "invoice_error": "Payment error. Please try again"
   }
 }

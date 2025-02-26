@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { chatService } from "../api/chat-service";
+import { flushSync } from "react-dom";
 
 export type Message = {
   text: string;
@@ -12,10 +13,14 @@ interface MessagesStore {
   messagesLimit: number;
   messages: Message[];
   isFetchingMessages: boolean;
+  incrementMessagesLimit: () => void;
   addMessage: (message: Message) => void;
   deleteMessage: (messageId: number) => void;
   markMessagesAsRead: () => void;
-  fetchMessages: (initialMessage: Message) => Promise<void>;
+  fetchMessages: (params: {
+    initialMessage: Message;
+    userId: number;
+  }) => Promise<void>;
   sendMessage: (params: {
     message: string;
     userId: number;
@@ -27,6 +32,9 @@ export const useMessages = create<MessagesStore>((set, get) => ({
   messagesLimit: 3,
   messages: [],
   isFetchingMessages: true,
+
+  incrementMessagesLimit: () =>
+    set((state) => ({ messagesLimit: state.messagesLimit + 1 })),
 
   addMessage: (message) =>
     set((state) => ({ messages: [...state.messages, message] })),
@@ -41,15 +49,19 @@ export const useMessages = create<MessagesStore>((set, get) => ({
       messages: state.messages.map((message) => ({ ...message, isNew: false })),
     })),
 
-  fetchMessages: async (initialMessage) => {
+  fetchMessages: async ({ initialMessage, userId }) => {
     set({ isFetchingMessages: true });
-    const messages = await chatService.getMessages();
+    const messages = await chatService.getMessages({ userId });
+    const newMessages = [
+      { ...initialMessage, isNew: messages.length === 0 },
+      ...messages,
+    ];
+    // TODO
+    // const userMessages = newMessages.filter((m) => m.from === "user")
     set({
-      messages: [
-        { ...initialMessage, isNew: messages.length === 0 },
-        ...messages,
-      ],
+      messages: newMessages,
       isFetchingMessages: false,
+      messagesLimit: 3, // TODO:
     });
   },
 
@@ -63,10 +75,11 @@ export const useMessages = create<MessagesStore>((set, get) => ({
       isNew: true,
     };
 
-    addMessage(userMessage);
+    flushSync(() => {
+      addMessage(userMessage);
+    });
 
-    // wait for the message to be added to DOM
-    setTimeout(onMessageAdded, 0);
+    onMessageAdded();
 
     try {
       const answer = await chatService.sendMessage({
