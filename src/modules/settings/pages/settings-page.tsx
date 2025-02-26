@@ -6,7 +6,40 @@ import { useTranslation } from "react-i18next";
 import StarsIcon from "@/modules/common/assets/tg-stars-icon.png";
 import TonIcon from "@/modules/common/assets/ton-icon.png";
 import { DisconnectIcon } from "@/modules/common/icons/disconnect-icon";
-import { useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
+import {
+  SendTransactionRequest,
+  useTonConnectUI,
+  useTonWallet,
+} from "@tonconnect/ui-react";
+import { beginCell, toNano } from "@ton/ton";
+
+const TestTonPayment = () => {
+  const [tonConnectUI] = useTonConnectUI();
+
+  const testPayment = async () => {
+    const body = beginCell()
+      .storeUint(0, 32) // write 32 zero bits to indicate that a text comment will follow
+      .storeStringTail("Hello, TON!") // write our text comment
+      .endCell();
+
+    const transaction: SendTransactionRequest = {
+      validUntil: Date.now() + 5 * 60 * 1000,
+      messages: [
+        {
+          address: import.meta.env.VITE_TON_ADDRESS,
+          amount: toNano("0.1").toString(),
+          payload: body.toBoc().toString(),
+        },
+      ],
+    };
+
+    const res = await tonConnectUI.sendTransaction(transaction);
+
+    console.log("@transaction", res);
+  };
+
+  return <Button onClick={testPayment}>Test transaction 0.1TON</Button>;
+};
 
 export const SettingsPage = () => {
   const { t, i18n } = useTranslation();
@@ -34,6 +67,8 @@ export const SettingsPage = () => {
         <h3 className="text-lg text-center text-white">
           {t("settings.select_payment_option")}
         </h3>
+
+        <TestTonPayment />
 
         <div className="mt-5 flex flex-col gap-6">
           <div className="flex gap-4 justify-between items-center">

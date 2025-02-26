@@ -19,5 +19,16 @@ export default defineConfig(({ mode }) => {
       },
     },
     base: "/matrix",
+    define: {
+      global: "window",
+    },
+    resolve: {
+      alias: {
+        buffer: "buffer",
+      },
+    },
+    optimizeDeps: {
+      include: ["buffer"],
+    },
   };
 });
