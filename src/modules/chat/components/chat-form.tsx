@@ -97,7 +97,7 @@ export const ChatForm = ({
     }
   };
 
-  const checkTonPayment = async (count = 0) => {
+  const checkTonPayment = async (count = 0): Promise<boolean> => {
     if (count === 5) {
       return false;
     }
