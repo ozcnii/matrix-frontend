@@ -144,6 +144,7 @@ export const ChatForm = ({
     } else if (status === "error" || status === "failed") {
       // TODO: add retries limit and after show error (+ i18n)
       // telegramStarsPaymentHandler();
+      //
       toast(t("payment.invoice_error"));
     } else if (status === "cancelled") {
       return;
