@@ -51,7 +51,7 @@ export const useMessages = create<MessagesStore>((set, get) => ({
 
   fetchMessages: async ({ initialMessage, userId }) => {
     set({ isFetchingMessages: true });
-    const messages = await chatService.getMessages({ userId });
+    const { messages } = await chatService.getMessages({ userId });
     const newMessages = [
       { ...initialMessage, isNew: messages.length === 0 },
       ...messages,

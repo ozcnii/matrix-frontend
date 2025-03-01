@@ -3,9 +3,14 @@ import { RightArrowIcon } from "@/modules/common/icons/right-arrow-icon";
 import { Button } from "@/modules/common/ui/button";
 import { useMessages } from "../stores/use-messages";
 import { FormEvent, useState } from "react";
-import { openInvoice } from "@telegram-apps/sdk-react";
+import { initData, openInvoice, useSignal } from "@telegram-apps/sdk-react";
 import { toast } from "react-toastify";
 import { api } from "@/modules/common/api";
+import { useSettings } from "@/modules/settings/stores/use-settings";
+import { SendTransactionRequest, useTonConnectUI } from "@tonconnect/ui-react";
+import { toNano } from "@ton/ton";
+
+const sleep = (ms = 1000) => new Promise((r) => setTimeout(r, ms));
 
 export const ChatForm = ({
   isAwaitingAnswer,
@@ -23,6 +28,7 @@ export const ChatForm = ({
   sendMessage: (message: string) => void;
 }) => {
   const { t } = useTranslation();
+  const { selectedPaymentType } = useSettings();
   const {
     isFetchingMessages,
     messages,
@@ -30,8 +36,10 @@ export const ChatForm = ({
     incrementMessagesLimit,
   } = useMessages();
 
-  const [isStarsPaymentLinkLoading, setIsStarsPaymentLinkLoading] =
-    useState(false);
+  const [tonConnectUI] = useTonConnectUI();
+  const user = useSignal(initData.user);
+
+  const [isPaymentLoading, setIsPaymentLoading] = useState(false);
   const [starsPaymentLink, setStarsPaymentLink] = useState<string | null>(null);
 
   const userMessages = messages.filter((message) => message.from === "user");
@@ -52,6 +60,71 @@ export const ChatForm = ({
   const openLimitMessageBoxHandler = () => {
     if (isMessagesLimitReached) {
       openLimitMessageBox();
+    }
+  };
+
+  const tonPaymentHandler = async () => {
+    setIsPaymentLoading(true);
+
+    const transaction: SendTransactionRequest = {
+      validUntil: Date.now() + 5 * 60 * 1000,
+      messages: [
+        {
+          address: import.meta.env.VITE_TON_ADDRESS,
+          amount: toNano("0.1").toString(),
+        },
+      ],
+    };
+
+    try {
+      await tonConnectUI.sendTransaction(transaction);
+
+      const isOk = await checkTonPayment();
+
+      if (isOk) {
+        // TODO: add i18n
+        toast("Оплата прошла успешно");
+        incrementMessagesLimit();
+        closeLimitMessageBox();
+      } else {
+        // TODO: add i18n
+        toast("Оплата не прошла");
+      }
+    } catch {
+      //
+    } finally {
+      setIsPaymentLoading(false);
+    }
+  };
+
+  const checkTonPayment = async (count = 0) => {
+    if (count === 5) {
+      return false;
+    }
+
+    const userId = user?.id || 0;
+
+    const sum = [...userId.toString()]
+      .map(Number)
+      .reduce((prev, acc) => prev + acc, 0);
+
+    try {
+      await api.post<boolean>(
+        "/check_payment",
+        {
+          adr: tonConnectUI.account?.address,
+          task_id: sum % 3,
+        },
+        {
+          headers: {
+            userid: userId,
+          },
+        }
+      );
+      return true;
+    } catch (error) {
+      await sleep(5000);
+      return checkTonPayment(count + 1);
     }
   };
 
@@ -84,7 +157,7 @@ export const ChatForm = ({
       return starsPaymentLink;
     }
 
-    setIsStarsPaymentLinkLoading(true);
+    setIsPaymentLoading(true);
 
     try {
       const response = await api.get<string>("get_invoice_link");
@@ -94,19 +167,25 @@ export const ChatForm = ({
       toast(t("payment.get_link_error"));
       return null;
     } finally {
-      setIsStarsPaymentLinkLoading(false);
+      setIsPaymentLoading(false);
     }
   };
 
   const submitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (isMessagesLimitReached) {
-      telegramStarsPaymentHandler();
+    if (!isMessagesLimitReached) {
+      sendMessage(messageValue);
       return;
     }
 
-    sendMessage(messageValue);
+    if (selectedPaymentType === "STARS") {
+      telegramStarsPaymentHandler();
+    }
+
+    if (selectedPaymentType === "TON") {
+      tonPaymentHandler();
+    }
   };
 
   return (
@@ -127,7 +206,7 @@ export const ChatForm = ({
       {isMessagesLimitReached ? (
         <Button
           type="submit"
-          loading={isStarsPaymentLinkLoading}
+          loading={isPaymentLoading}
           className="h-12 w-12 text-white/20"
         >
           $
