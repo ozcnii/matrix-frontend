@@ -30,6 +30,7 @@ export const TypingText = ({
               variants={child}
               key={index}
               className={className}
+              style={{ willChange: "opacity" }}
               onAnimationComplete={onWordTyped}
             >
               {textCharacter === " " ? "\u00a0" : textCharacter}
@@ -58,14 +59,14 @@ const child: Variants = {
     opacity: 1,
     display: "inline-block",
     transition: {
-      duration: 0,
+      duration: 0.1,
     },
   },
   hidden: {
     opacity: 0,
     display: "none",
     transition: {
-      duration: 0,
+      duration: 0.1,
     },
   },
 };
