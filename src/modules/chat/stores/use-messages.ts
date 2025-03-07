@@ -33,8 +33,8 @@ export const useMessages = create<MessagesStore>((set, get) => ({
   messages: [],
   isFetchingMessages: true,
 
-  incrementMessagesLimit: () =>
-    set((state) => ({ messagesLimit: state.messagesLimit + 1 })),
+  incrementMessagesLimit: (incrementValue = 3) =>
+    set((state) => ({ messagesLimit: state.messagesLimit + incrementValue })),
 
   addMessage: (message) =>
     set((state) => ({ messages: [...state.messages, message] })),
@@ -51,17 +51,18 @@ export const useMessages = create<MessagesStore>((set, get) => ({
 
   fetchMessages: async ({ initialMessage, userId }) => {
     set({ isFetchingMessages: true });
-    const { messages } = await chatService.getMessages({ userId });
+    const { messages, messagesLimit } = await chatService.getMessages({
+      userId,
+    });
     const newMessages = [
       { ...initialMessage, isNew: messages.length === 0 },
       ...messages,
     ];
-    // TODO
-    // const userMessages = newMessages.filter((m) => m.from === "user")
+    const userMessages = newMessages.filter((m) => m.from === "user");
     set({
       messages: newMessages,
       isFetchingMessages: false,
-      messagesLimit: 3, // TODO:
+      messagesLimit: userMessages.length + messagesLimit,
     });
   },
 
