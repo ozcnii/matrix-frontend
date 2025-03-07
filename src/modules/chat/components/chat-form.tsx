@@ -98,7 +98,7 @@ export const ChatForm = ({
   };
 
   const checkTonPayment = async (count = 0): Promise<boolean> => {
-    if (count === 5) {
+    if (count === 10) {
       return false;
     }
 
@@ -123,7 +123,7 @@ export const ChatForm = ({
       );
       return true;
     } catch (error) {
-      await sleep(5000);
+      await sleep(1000);
       return checkTonPayment(count + 1);
     }
   };
