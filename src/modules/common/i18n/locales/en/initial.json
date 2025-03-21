@@ -16,8 +16,7 @@
   },
 
   "chat": {
-    "prize_pool": "Prize pool",
-    "participants": "Participants",
+    "guessed_words_count_message": "You guessed {{count}} out of {{max}} words",
     "attempts": "Attempts",
     "prize_pool_message": "Bot is an AI chat controls a prize pool. Your goal is to convince her to send you this prize. Read FAQ to lear more.",
     "free_message": "free msg",

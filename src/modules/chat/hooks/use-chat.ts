@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { initData, useSignal } from "@telegram-apps/sdk-react";
 import { toast } from "react-toastify";
 import { useMessages } from "../stores/use-messages";
+import { useTranslation } from "react-i18next";
 
 export const useChat = () => {
   const { t } = useTranslation();
@@ -18,12 +18,22 @@ export const useChat = () => {
   useEffect(() => {
     if (!messages.length) {
       fetchMessages({
-        initialMessage: {
-          text: t("chat.first_bot_message"),
-          from: "bot",
-          id: Date.now(),
-          isNew: true,
-        },
+        initialMessages: [
+          {
+            text: "dog, cat, sun, moon, star, tree, book, pen, car, bus, door, chair, road, hand, foot, eye, cake, fish, hat",
+            from: "bot",
+            id: Date.now(),
+            isNew: true,
+            type: "words",
+          },
+          {
+            text: t("chat.first_bot_message"),
+            from: "bot",
+            id: Date.now() + 1,
+            isNew: true,
+            type: "message",
+          },
+        ],
         userId: user?.id || 0,
       }).then(() => scrollToBottom());
     } else {

@@ -65,7 +65,7 @@ export const ReferralsPage = () => {
           <br />
           <p className="text-white font-bold">
             {t("referrals.earned")}:{" "}
-            {isReferralsLoading ? "..." : referrals?.earn}
+            {isReferralsLoading ? "..." : referrals?.earn + " TON"}
           </p>
         </div>
 

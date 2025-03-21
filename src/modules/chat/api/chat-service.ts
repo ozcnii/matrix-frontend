@@ -55,6 +55,7 @@ export const chatService = {
           id: message.id,
           isNew: false,
           text: message.system,
+          type: "message",
         });
       }
 
@@ -64,6 +65,7 @@ export const chatService = {
           id: message.id,
           isNew: false,
           text: message.user,
+          type: "message",
         });
       }
     });

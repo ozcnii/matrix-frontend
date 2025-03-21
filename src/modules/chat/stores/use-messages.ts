@@ -7,6 +7,7 @@ export type Message = {
   from: "user" | "bot";
   id: number;
   isNew: boolean;
+  type: "message" | "words";
 };
 
 interface MessagesStore {
@@ -18,7 +19,7 @@ interface MessagesStore {
   deleteMessage: (messageId: number) => void;
   markMessagesAsRead: () => void;
   fetchMessages: (params: {
-    initialMessage: Message;
+    initialMessages: Message[];
     userId: number;
   }) => Promise<void>;
   sendMessage: (params: {
@@ -49,13 +50,13 @@ export const useMessages = create<MessagesStore>((set, get) => ({
       messages: state.messages.map((message) => ({ ...message, isNew: false })),
     })),
 
-  fetchMessages: async ({ initialMessage, userId }) => {
+  fetchMessages: async ({ initialMessages, userId }) => {
     set({ isFetchingMessages: true });
     const { messages, messagesLimit } = await chatService.getMessages({
       userId,
     });
     const newMessages = [
-      { ...initialMessage, isNew: messages.length === 0 },
+      ...initialMessages.map((m) => ({ ...m, isNew: messages.length === 0 })),
       ...messages,
     ];
     const userMessages = newMessages.filter((m) => m.from === "user");
@@ -74,6 +75,7 @@ export const useMessages = create<MessagesStore>((set, get) => ({
       from: "user",
       id: Date.now(),
       isNew: true,
+      type: "message",
     };
 
     flushSync(() => {
@@ -83,6 +85,8 @@ export const useMessages = create<MessagesStore>((set, get) => ({
     onMessageAdded();
 
     try {
+      // TODO: need return value and handle
+      // sendMessage().then((data) => data.isWinner && addToGuessedWords(data.word))
       const answer = await chatService.sendMessage({
         message,
         userId,
@@ -93,6 +97,7 @@ export const useMessages = create<MessagesStore>((set, get) => ({
         from: "bot",
         id: Date.now(),
         isNew: true,
+        type: "message",
       });
     } catch (error) {
       console.error(error);
