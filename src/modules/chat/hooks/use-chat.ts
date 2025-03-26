@@ -35,7 +35,12 @@ export const useChat = () => {
           },
         ],
         userId: user?.id || 0,
-      }).then(() => scrollToBottom());
+      })
+        .then(() => scrollToBottom())
+        .catch((error) => {
+          toast(error?.response?.data || error?.message || error);
+          console.error(error);
+        });
     } else {
       scrollToBottom(false);
     }

@@ -6,6 +6,7 @@ import {
   initData,
   $debug,
   init as initSDK,
+  setMiniAppHeaderColor,
 } from "@telegram-apps/sdk-react";
 
 export function init(debug: boolean): void {
@@ -30,6 +31,8 @@ export function init(debug: boolean): void {
   miniApp.mount();
   themeParams.mount();
   initData.restore();
+
+  setMiniAppHeaderColor("#000000");
 
   void viewport
     .mount()

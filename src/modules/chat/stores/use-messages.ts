@@ -55,11 +55,19 @@ export const useMessages = create<MessagesStore>((set, get) => ({
     const { messages, messagesLimit } = await chatService.getMessages({
       userId,
     });
+
+    if (messages.length === 0) {
+      // task_id on next line
+      await chatService.startRiddle({ userId, taskId: 1 });
+    }
+
     const newMessages = [
       ...initialMessages.map((m) => ({ ...m, isNew: messages.length === 0 })),
       ...messages,
     ];
+
     const userMessages = newMessages.filter((m) => m.from === "user");
+
     set({
       messages: newMessages,
       isFetchingMessages: false,

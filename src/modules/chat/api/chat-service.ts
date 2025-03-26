@@ -33,7 +33,64 @@ export const chatService = {
   }: {
     userId: number;
   }): Promise<{ messages: Message[]; messagesLimit: number }> => {
-    const response = await api.get<{
+    try {
+      const response = await api.get<{
+        msgs: (
+          | {
+              user: string;
+              id: number;
+            }
+          | { system: string; id: number }
+        )[];
+        free_msgs: number;
+      }>("/riddle_history/1", {
+        headers: { userid: userId },
+      });
+
+      const messages: Message[] = [];
+
+      response.data.msgs.forEach((message) => {
+        if ("system" in message) {
+          messages.push({
+            from: "bot",
+            id: message.id,
+            isNew: false,
+            text: message.system,
+            type: "message",
+          });
+        }
+
+        if ("user" in message) {
+          messages.push({
+            from: "user",
+            id: message.id,
+            isNew: false,
+            text: message.user,
+            type: "message",
+          });
+        }
+      });
+
+      return {
+        messages,
+        messagesLimit: response.data.free_msgs,
+      };
+    } catch (error) {
+      return {
+        messages: [],
+        messagesLimit: 0,
+      };
+    }
+  },
+
+  startRiddle: async ({
+    userId,
+    taskId,
+  }: {
+    userId: number;
+    taskId: number;
+  }) => {
+    const response = await api.post<{
       msgs: (
         | {
             user: string;
@@ -42,37 +99,16 @@ export const chatService = {
         | { system: string; id: number }
       )[];
       free_msgs: number;
-    }>("/riddle_history/1", {
-      headers: { userid: userId },
-    });
-
-    const messages: Message[] = [];
-
-    response.data.msgs.forEach((message) => {
-      if ("system" in message) {
-        messages.push({
-          from: "bot",
-          id: message.id,
-          isNew: false,
-          text: message.system,
-          type: "message",
-        });
+    }>(
+      "/start_riddle",
+      {
+        task_id: taskId,
+      },
+      {
+        headers: { userid: userId },
       }
+    );
 
-      if ("user" in message) {
-        messages.push({
-          from: "user",
-          id: message.id,
-          isNew: false,
-          text: message.user,
-          type: "message",
-        });
-      }
-    });
-
-    return {
-      messages,
-      messagesLimit: response.data.free_msgs,
-    };
+    console.log("@@@", response.data);
   },
 };
