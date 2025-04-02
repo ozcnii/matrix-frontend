@@ -14,6 +14,7 @@ interface MessagesStore {
   messagesLimit: number;
   messages: Message[];
   isFetchingMessages: boolean;
+  setIsFetchingMessages: (isFetchingMessages: boolean) => void;
   incrementMessagesLimit: () => void;
   addMessage: (message: Message) => void;
   deleteMessage: (messageId: number) => void;
@@ -29,6 +30,7 @@ interface MessagesStore {
     taskId: number;
     onMessageAdded: () => void;
   }) => Promise<{ response: string; solved: boolean; solved_word: string }>;
+  setFirstMessage: (message: Message) => void;
 }
 
 export const useMessages = create<MessagesStore>((set, get) => ({
@@ -59,10 +61,6 @@ export const useMessages = create<MessagesStore>((set, get) => ({
       taskId,
     });
 
-    if (messages.length === 0) {
-      await chatService.startRiddle({ userId, taskId });
-    }
-
     const newMessages = [
       ...initialMessages.map((m) => ({ ...m, isNew: messages.length === 0 })),
       ...messages,
@@ -72,10 +70,14 @@ export const useMessages = create<MessagesStore>((set, get) => ({
 
     set({
       messages: newMessages,
-      isFetchingMessages: false,
+      // isFetchingMessages: false,
       messagesLimit: userMessages.length + messagesLimit,
     });
   },
+
+  setIsFetchingMessages: (isFetchingMessages) => set({ isFetchingMessages }),
+
+  setFirstMessage: (message) => set({ messages: [message, ...get().messages] }),
 
   sendMessage: async ({ message, userId, onMessageAdded, taskId }) => {
     const { addMessage, deleteMessage } = get();

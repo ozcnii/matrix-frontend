@@ -15,8 +15,14 @@ export const useChat = () => {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const user = useSignal(initData.user);
 
-  const { messages, sendMessage, markMessagesAsRead, fetchMessages } =
-    useMessages();
+  const {
+    messages,
+    sendMessage,
+    markMessagesAsRead,
+    fetchMessages,
+    setIsFetchingMessages,
+    setFirstMessage,
+  } = useMessages();
 
   const { setSolvedTasks, solved, unsolved, getCurrentTask } = useTasks();
   const { pushGuessedWord, setSeedPhrase, setGuessedWords, setIsShowModal } =
@@ -31,37 +37,42 @@ export const useChat = () => {
       .then((stat) => {
         setSolvedTasks({ solved: stat.solved, unsolved: stat.unsolved });
 
-        userService
-          .getSeedPhrase({ userId: user?.id || 0 })
-          .then((seedPhrase) => {
-            setSeedPhrase(seedPhrase);
-            setGuessedWords(
-              seedPhrase
-                .slice(seedPhrase.length - MAX_GUESSED_WORDS, seedPhrase.length)
-                .filter((w) => w != "?")
-            );
-
-            fetchMessages({
-              initialMessages: [
-                {
+        fetchMessages({
+          initialMessages: [
+            {
+              text: t("chat.first_bot_message"),
+              from: "bot",
+              id: Date.now() + 1,
+              isNew: true,
+              type: "message",
+            },
+          ],
+          userId: user?.id || 0,
+          taskId: stat.solved + 1,
+        })
+          .then(() => {
+            userService
+              .getSeedPhrase({ userId: user?.id || 0 })
+              .then((seedPhrase) => {
+                setSeedPhrase(seedPhrase);
+                setGuessedWords(
+                  seedPhrase
+                    .slice(
+                      seedPhrase.length - MAX_GUESSED_WORDS,
+                      seedPhrase.length
+                    )
+                    .filter((w) => w != "?")
+                );
+                setFirstMessage({
                   text: seedPhrase.join(", "),
                   from: "bot",
                   id: Date.now(),
                   isNew: true,
                   type: "words",
-                },
-                {
-                  text: t("chat.first_bot_message"),
-                  from: "bot",
-                  id: Date.now() + 1,
-                  isNew: true,
-                  type: "message",
-                },
-              ],
-              userId: user?.id || 0,
-              taskId: stat.solved + 1,
-            })
-              .then(() => scrollToBottom())
+                });
+                setIsFetchingMessages(false);
+                scrollToBottom();
+              })
               .catch((error) => {
                 toast(error?.response?.data || error?.message || error);
                 console.error(error);

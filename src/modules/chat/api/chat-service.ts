@@ -85,31 +85,4 @@ export const chatService = {
       };
     }
   },
-
-  startRiddle: async ({
-    userId,
-    taskId,
-  }: {
-    userId: number;
-    taskId: number;
-  }): Promise<void> => {
-    await api.post<{
-      msgs: (
-        | {
-            user: string;
-            id: number;
-          }
-        | { system: string; id: number }
-      )[];
-      free_msgs: number;
-    }>(
-      "/start_riddle",
-      {
-        task_id: taskId,
-      },
-      {
-        headers: { userid: userId },
-      }
-    );
-  },
 };
