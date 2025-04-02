@@ -5,8 +5,6 @@ import {
   useGuessedWords,
 } from "../stores/use-guessed-words";
 import { useTranslation } from "react-i18next";
-import { CopyIcon } from "@/modules/common/icons/copy-icon";
-import { copyToClipboard } from "@/modules/common/helpers/copy-to-clipboard";
 
 export const GuessedWordModal = ({ onClose }: { onClose: () => void }) => {
   const { t } = useTranslation();
@@ -22,7 +20,6 @@ export const GuessedWordModal = ({ onClose }: { onClose: () => void }) => {
         })}
       </span>
       <Button
-        onClick={() => copyToClipboard(lastWord)}
         size="l"
         stretched
         className="mt-5"
@@ -30,7 +27,6 @@ export const GuessedWordModal = ({ onClose }: { onClose: () => void }) => {
           backgroundColor: "#242922",
           border: "none",
         }}
-        after={<CopyIcon className="text-[#BEBEBE] absolute right-4" />}
       >
         <span className="text-white text-xl">{lastWord}</span>
       </Button>

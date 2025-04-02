@@ -21,12 +21,14 @@ interface MessagesStore {
   fetchMessages: (params: {
     initialMessages: Message[];
     userId: number;
+    taskId: number;
   }) => Promise<void>;
   sendMessage: (params: {
     message: string;
     userId: number;
+    taskId: number;
     onMessageAdded: () => void;
-  }) => Promise<void>;
+  }) => Promise<{ response: string; solved: boolean; solved_word: string }>;
 }
 
 export const useMessages = create<MessagesStore>((set, get) => ({
@@ -50,15 +52,15 @@ export const useMessages = create<MessagesStore>((set, get) => ({
       messages: state.messages.map((message) => ({ ...message, isNew: false })),
     })),
 
-  fetchMessages: async ({ initialMessages, userId }) => {
+  fetchMessages: async ({ initialMessages, userId, taskId }) => {
     set({ isFetchingMessages: true });
     const { messages, messagesLimit } = await chatService.getMessages({
       userId,
+      taskId,
     });
 
     if (messages.length === 0) {
-      // task_id on next line
-      await chatService.startRiddle({ userId, taskId: 1 });
+      await chatService.startRiddle({ userId, taskId });
     }
 
     const newMessages = [
@@ -75,7 +77,7 @@ export const useMessages = create<MessagesStore>((set, get) => ({
     });
   },
 
-  sendMessage: async ({ message, userId, onMessageAdded }) => {
+  sendMessage: async ({ message, userId, onMessageAdded, taskId }) => {
     const { addMessage, deleteMessage } = get();
 
     const userMessage: Message = {
@@ -93,20 +95,21 @@ export const useMessages = create<MessagesStore>((set, get) => ({
     onMessageAdded();
 
     try {
-      // TODO: need return value and handle
-      // sendMessage().then((data) => data.isWinner && addToGuessedWords(data.word))
-      const answer = await chatService.sendMessage({
+      const data = await chatService.sendMessage({
         message,
         userId,
+        taskId,
       });
 
       addMessage({
-        text: answer,
+        text: data.response,
         from: "bot",
         id: Date.now(),
         isNew: true,
         type: "message",
       });
+
+      return data;
     } catch (error) {
       console.error(error);
       deleteMessage(userMessage.id);

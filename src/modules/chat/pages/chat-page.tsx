@@ -7,6 +7,8 @@ import { Spinner } from "@telegram-apps/telegram-ui";
 import { ChatForm } from "../components/chat-form";
 import { ChatHeader } from "../components/chat-header";
 import { useMessages } from "../stores/use-messages";
+import { useGuessedWords } from "../stores/use-guessed-words";
+import { GuessedWordModal } from "../components/guessed-word-modal";
 
 export const ChatPage = () => {
   const { t } = useTranslation();
@@ -29,6 +31,8 @@ export const ChatPage = () => {
     isAwaitingAnswer,
     sendMessage,
   } = useChat();
+
+  const { isShowModal, setIsShowModal } = useGuessedWords();
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -72,6 +76,10 @@ export const ChatPage = () => {
           sendMessage={sendMessage}
         />
       </div>
+
+      {isShowModal && (
+        <GuessedWordModal onClose={() => setIsShowModal(false)} />
+      )}
     </div>
   );
 };

@@ -9,6 +9,7 @@ import { api } from "@/modules/common/api";
 import { useSettings } from "@/modules/settings/stores/use-settings";
 import { SendTransactionRequest, useTonConnectUI } from "@tonconnect/ui-react";
 import { toNano } from "@ton/ton";
+import { useTasks } from "../stores/use-tasks";
 
 const sleep = (ms = 1000) => new Promise((r) => setTimeout(r, ms));
 
@@ -42,6 +43,7 @@ export const ChatForm = ({
   const [isPaymentLoading, setIsPaymentLoading] = useState(false);
   const [starsPaymentLink, setStarsPaymentLink] = useState<string | null>(null);
 
+  const { getCurrentTask } = useTasks();
   const userMessages = messages.filter((message) => message.from === "user");
   const isMessagesLimitReached = userMessages.length >= messagesLimit;
 
@@ -82,13 +84,11 @@ export const ChatForm = ({
       const isOk = await checkTonPayment();
 
       if (isOk) {
-        // TODO: add i18n
-        toast("Оплата прошла успешно");
+        toast(t("payment.success"));
         incrementMessagesLimit();
         closeLimitMessageBox();
       } else {
-        // TODO: add i18n
-        toast("Оплата не прошла");
+        toast(t("payment.invoice_error"));
       }
     } catch {
       //
@@ -104,16 +104,12 @@ export const ChatForm = ({
 
     const userId = user?.id || 0;
 
-    const sum = [...userId.toString()]
-      .map(Number)
-      .reduce((prev, acc) => prev + acc, 0);
-
     try {
       await api.post<boolean>(
         "/check_payment",
         {
           adr: tonConnectUI.account?.address,
-          task_id: sum % 3,
+          task_id: getCurrentTask(),
         },
         {
           headers: {
