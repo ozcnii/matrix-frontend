@@ -157,7 +157,9 @@ export const ChatForm = ({
     setIsPaymentLoading(true);
 
     try {
-      const response = await api.get<string>("get_invoice_link");
+      const response = await api.get<string>(
+        `get_invoice_link/${getCurrentTask()}`
+      );
       setStarsPaymentLink(response.data);
       return response.data;
     } catch (error) {
