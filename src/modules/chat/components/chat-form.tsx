@@ -206,9 +206,9 @@ export const ChatForm = ({
         <Button
           type="submit"
           loading={isPaymentLoading}
-          className="h-12 w-12 text-white/20"
+          className="h-12 w-12 text-white/20 animate-upscale"
         >
-          $
+          <span>$</span>
         </Button>
       ) : (
         <Button

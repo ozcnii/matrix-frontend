@@ -9,6 +9,7 @@ import {
 } from "../stores/use-guessed-words";
 import { userService } from "../api/user-service";
 import { useTasks } from "../stores/use-tasks";
+import { AxiosError } from "axios";
 
 export const useChat = () => {
   const { t } = useTranslation();
@@ -36,7 +37,6 @@ export const useChat = () => {
       .getUserRiddlesStat({ userId: user?.id || 0 })
       .then((stat) => {
         setSolvedTasks({ solved: stat.solved, unsolved: stat.unsolved });
-
         fetchMessages({
           initialMessages: [
             {
@@ -135,6 +135,17 @@ export const useChat = () => {
       }
     } catch (error) {
       console.error(error);
+
+      if (error instanceof AxiosError) {
+        if (error.status === 402) {
+          toast(
+            t("chat.free_limit_message") +
+              " " +
+              t("chat.free_limit_prize_message")
+          );
+          return;
+        }
+      }
       toast(String(error));
     }
   };

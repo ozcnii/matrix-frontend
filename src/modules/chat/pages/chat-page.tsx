@@ -36,7 +36,7 @@ export const ChatPage = () => {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <ChatHeader />
+      <ChatHeader setMessageValue={setMessageValue} />
 
       <section className="p-4 flex flex-col h-full overflow-hidden gap-4">
         {!prizePoolMessageBoxClosed && (
@@ -64,6 +64,10 @@ export const ChatPage = () => {
         {!limitMessageBoxClosed && (
           <MessageBox onClose={onCloseLimitMessageBox}>
             {t("chat.free_limit_message")}
+            {"\n"}
+            <span className="text-[#ccc]/40">
+              {t("chat.free_limit_prize_message")}
+            </span>
           </MessageBox>
         )}
 

@@ -18,11 +18,13 @@
   "chat": {
     "guessed_words_count_message": "You guessed {{count}} out of {{max}} words",
     "attempts": "Attempts",
-    "prize_pool_message": "Bot is an AI chat controls a prize pool. Your goal is to convince her to send you this prize. Read FAQ to lear more.",
+    "prize_pool_message": "The bot is an AI - chatbot that helps you solve riddles and recover seed phrases from the treasure purse.",
     "free_message": "free msg",
-    "free_limit_message": "You have reached your free message limit. The next messages will be paid. Blah blah blah.",
+    "free_limit_message": "To continue, pay for new questions using the button on the right.",
+    "free_limit_prize_message": "Just 1 xtr or 0.1 ton.",
     "limit_placeholder": "Pay {{amount}} to send message...",
-    "first_bot_message": "The Matrix has you."
+    "first_bot_message": "The Matrix has you.",
+    "sure_solved_riddle": "Click if you're sure you've solved the riddle"
   },
 
   "referrals": {
