@@ -127,11 +127,14 @@ export const useChat = () => {
       if (isSolvedTask) {
         setIsShowModal(true);
         pushGuessedWord(solved_word);
-        setSolvedTasks({
-          solved: solved + 1,
-          unsolved: unsolved - 1,
-        });
-        loadData();
+
+        if (solved < (solved+ unsolved)) {
+          setSolvedTasks({
+            solved: solved + 1,
+            unsolved: unsolved - 1,
+          });  
+          loadData();
+        }
       }
     } catch (error) {
       console.error(error);
