@@ -1,8 +1,7 @@
 import { api } from "@/modules/common/api";
 
 export type TvlPrizeResponse = {
-  totalTon: number;
-  totXTR: number;
+  totalUsd: number;
 };
 
 export const tvlService = {

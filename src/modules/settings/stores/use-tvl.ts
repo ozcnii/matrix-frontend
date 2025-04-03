@@ -4,9 +4,8 @@ interface TvlStore {
   isTvlLoading: boolean;
   setIsTvlLoading: (isTvlLoading: boolean) => void;
 
-  totalTon: number;
-  totXTR: number;
-  setTvl: (payload: { totalTon: number; totXTR: number }) => void;
+  totalUsd: number;
+  setTvl: (payload: { totalUsd: number }) => void;
 }
 
 export const useTvl = create<TvlStore>((set) => ({
@@ -15,5 +14,6 @@ export const useTvl = create<TvlStore>((set) => ({
 
   totalTon: 0,
   totXTR: 0,
-  setTvl: ({ totalTon, totXTR }) => set({ totalTon, totXTR }),
+  totalUsd: 0,
+  setTvl: (payload) => set(payload),
 }));

@@ -11,7 +11,7 @@
 
   "navbar": {
     "chat": "Chat",
-    "referrals": "Referrals",
+    "referrals": "Rewards",
     "settings": "Settings"
   },
 
@@ -27,8 +27,12 @@
     "sure_solved_riddle": "Click if you're sure you've solved the riddle"
   },
 
+  "prize_pool": {
+    "prize_pool": "Prize pool"
+  },
+
   "referrals": {
-    "header": "Referrals",
+    "header": "Rewards",
     "title": "Referrals",
     "instruction": "For each referral you will receive something.",
     "earned": "You earned",

@@ -14,6 +14,7 @@ import {
   referralsService,
 } from "../api/referrals-service";
 import { toast } from "react-toastify";
+import { useTvl } from "@/modules/settings/stores/use-tvl";
 
 const botUsername = import.meta.env.VITE_BOT_USERNAME || "matrix_simple_bot";
 
@@ -23,6 +24,7 @@ export const ReferralsPage = () => {
   const [claimed, setClaimed] = useState(false);
   const [referrals, setReferrals] = useState<GetReferralsResponse | null>(null);
   const [isReferralsLoading, setIsReferralsLoading] = useState(true);
+  const { totalUsd, isTvlLoading } = useTvl();
 
   const inviteLinkUrl =
     "https://t.me/share/url?url=" +
@@ -54,6 +56,10 @@ export const ReferralsPage = () => {
           {t("referrals.header")}
         </h2>
       </header>
+
+      <h3 className="text-white py-5  text-lg text-center font-bold border-b border-white/20">
+        {t("prize_pool.prize_pool")}: ${isTvlLoading ? "..." : totalUsd}
+      </h3>
 
       <section className="p-4 flex flex-col h-full overflow-auto gap-4">
         <div className="text-center">
