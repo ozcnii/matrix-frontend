@@ -23,7 +23,7 @@ export const ChatMessage = ({
         <div className="grid grid-cols-3 gap-[5px] text-center text-white">
           {words.map((word, index) => (
             <span
-              className="bg-[#242922] h-[38px] w-[80px] p-[10px] rounded-[8px]"
+              className="bg-[#242922] h-[38px] w-[80px] p-[10px] rounded-[8px] text-white"
               key={index}
             >
               {word}
@@ -38,6 +38,7 @@ export const ChatMessage = ({
             backgroundColor: "#242922",
             border: "none",
           }}
+          className="text-white"
           after={<CopyIcon className="text-[#BEBEBE] absolute right-4" />}
         >
           {t("common.copy")}

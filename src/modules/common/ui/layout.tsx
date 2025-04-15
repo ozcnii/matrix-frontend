@@ -34,7 +34,7 @@ export const Layout = ({
 
   return (
     <>
-      <div className="h-screen overflow-hidden w-full bg-black text-[#55B146] font-mono flex flex-col relative">
+      <div className="h-dvh min-h-dvh max-h-dvh overflow-hidden w-full bg-black text-[#55B146] font-mono flex flex-col relative">
         <main className="flex-1 overflow-auto">{children}</main>
 
         {showNavbar && (

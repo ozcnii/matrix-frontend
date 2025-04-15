@@ -95,10 +95,7 @@ export const ReferralsPage = () => {
           size="l"
           className="[&>span]:text-sm"
           before={<ReferralsIcon h={18} w={18} />}
-          onClick={() => {
-            console.log("@inviteLinkUrl", inviteLinkUrl);
-            openTelegramLink(inviteLinkUrl);
-          }}
+          onClick={() => openTelegramLink(inviteLinkUrl)}
         >
           {t("referrals.invite_button")}
         </Button>

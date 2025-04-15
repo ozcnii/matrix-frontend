@@ -22,7 +22,7 @@ export const GuessedWordModal = ({ onClose }: { onClose: () => void }) => {
       <Button
         size="l"
         stretched
-        className="mt-5"
+        className="mt-5 text-white"
         style={{
           backgroundColor: "#242922",
           border: "none",
