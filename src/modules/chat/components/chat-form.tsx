@@ -125,27 +125,32 @@ export const ChatForm = ({
   };
 
   const telegramStarsPaymentHandler = async () => {
-    const link = await fetchStarsPaymentLink();
+    try {
+      const link = await fetchStarsPaymentLink();
 
-    if (!link) {
-      return;
-    }
+      if (!link) {
+        return;
+      }
 
-    const status = await openInvoice(link, "url");
+      const status = await openInvoice(link, "url");
 
-    if (status === "paid") {
-      toast(t("payment.success"));
-      incrementMessagesLimit();
-      closeLimitMessageBox();
-    } else if (status === "error" || status === "failed") {
-      // TODO: add retries limit and after show error (+ i18n)
-      // telegramStarsPaymentHandler();
-      //
+      if (status === "paid") {
+        toast(t("payment.success"));
+        incrementMessagesLimit();
+        closeLimitMessageBox();
+      } else if (status === "error" || status === "failed") {
+        // TODO: add retries limit and after show error (+ i18n)
+        // telegramStarsPaymentHandler();
+        //
+        toast(t("payment.invoice_error"));
+      } else if (status === "cancelled") {
+        return;
+      } else {
+        toast(t("payment.unknown_status", { status }));
+      }
+    } catch (error) {
+      console.error(error);
       toast(t("payment.invoice_error"));
-    } else if (status === "cancelled") {
-      return;
-    } else {
-      toast(t("payment.unknown_status", { status }));
     }
   };
 

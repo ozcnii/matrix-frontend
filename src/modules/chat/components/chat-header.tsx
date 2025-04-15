@@ -45,7 +45,7 @@ export const ChatHeader = ({
 
         <Button
           stretched
-          className="bg-[#242922] mt-1"
+          className="bg-[#242922] mt-1 text-white"
           onClick={sureSolvedHandler}
         >
           {t("chat.sure_solved_riddle")}
