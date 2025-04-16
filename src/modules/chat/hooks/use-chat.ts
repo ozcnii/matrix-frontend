@@ -22,7 +22,6 @@ export const useChat = () => {
     markMessagesAsRead,
     fetchMessages,
     setIsFetchingMessages,
-    setFirstMessage,
   } = useMessages();
 
   const { setSolvedTasks, solved, unsolved, getCurrentTask } = useTasks();
@@ -63,13 +62,6 @@ export const useChat = () => {
                     )
                     .filter((w) => w != "?")
                 );
-                setFirstMessage({
-                  text: seedPhrase.join(", "),
-                  from: "bot",
-                  id: Date.now(),
-                  isNew: true,
-                  type: "words",
-                });
                 setIsFetchingMessages(false);
                 scrollToBottom();
               })

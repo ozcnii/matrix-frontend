@@ -5,13 +5,19 @@ import {
 } from "../stores/use-guessed-words";
 import { Progress } from "./progress";
 import { useTasks } from "../stores/use-tasks";
-import { Button } from "@telegram-apps/telegram-ui";
+import { Button, Tooltip } from "@telegram-apps/telegram-ui";
+import { useRef, useState } from "react";
+import { useOutsideClick } from "@/modules/common/hooks/use-outside-click";
 
 export const ChatHeader = ({
   setMessageValue,
 }: {
   setMessageValue: (value: string) => void;
 }) => {
+  const tooltipRef = useRef<HTMLButtonElement>(null);
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  useOutsideClick(tooltipRef, () => setIsTooltipVisible(false));
+
   const { t, i18n } = useTranslation();
   const { guessedWords } = useGuessedWords();
   const { getCurrentTaskSubject } = useTasks();
@@ -37,7 +43,23 @@ export const ChatHeader = ({
             max: MAX_GUESSED_WORDS,
           })}
         </h2>
-        <Progress current={guessedWords.length} max={MAX_GUESSED_WORDS} />
+        <div className="flex items-center gap-2">
+          <Progress current={guessedWords.length} max={MAX_GUESSED_WORDS} />
+
+          <button
+            ref={tooltipRef}
+            onClick={() => setIsTooltipVisible((prev) => !prev)}
+            className="h-9 w-9 border-2 border-white/20 rounded-full"
+          >
+            ?
+          </button>
+
+          {isTooltipVisible && (
+            <Tooltip mode="light" withArrow={false} targetRef={tooltipRef}>
+              {t("common.hint")}
+            </Tooltip>
+          )}
+        </div>
       </header>
 
       <div className="text-center py-5 px-4 border-b border-white/20 text-white">

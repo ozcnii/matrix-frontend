@@ -62,6 +62,7 @@
   },
 
   "common": {
-    "copy": "Copy"
+    "copy": "Copy",
+    "hint": "You have to ask general questions to guess the riddle. A clue is a fully reconstructed story"
   }
 }

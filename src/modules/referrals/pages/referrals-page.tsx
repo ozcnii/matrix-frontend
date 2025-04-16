@@ -15,6 +15,10 @@ import {
 } from "../api/referrals-service";
 import { toast } from "react-toastify";
 import { useTvl } from "@/modules/settings/stores/use-tvl";
+import { CopyIcon } from "@/modules/common/icons/copy-icon";
+import { copyToClipboard } from "@/modules/common/helpers/copy-to-clipboard";
+import { useGuessedWords } from "@/modules/chat/stores/use-guessed-words";
+import { Spinner } from "@telegram-apps/telegram-ui";
 
 const botUsername = import.meta.env.VITE_BOT_USERNAME || "matrix_simple_bot";
 
@@ -25,6 +29,8 @@ export const ReferralsPage = () => {
   const [referrals, setReferrals] = useState<GetReferralsResponse | null>(null);
   const [isReferralsLoading, setIsReferralsLoading] = useState(true);
   const { totalUsd, isTvlLoading } = useTvl();
+
+  const { seedPhrase } = useGuessedWords();
 
   const inviteLinkUrl =
     "https://t.me/share/url?url=" +
@@ -74,7 +80,6 @@ export const ReferralsPage = () => {
             {isReferralsLoading ? "..." : referrals?.earn + " TON"}
           </p>
         </div>
-
         <Button
           size="l"
           disabled={claimed}
@@ -90,7 +95,6 @@ export const ReferralsPage = () => {
             t("referrals.claim_button")
           )}
         </Button>
-
         <Button
           size="l"
           className="[&>span]:text-sm"
@@ -99,6 +103,42 @@ export const ReferralsPage = () => {
         >
           {t("referrals.invite_button")}
         </Button>
+
+        <h3 className="text-white py-5 text-center font-bold border-b border-t border-white/20">
+          Seed Phrase
+        </h3>
+
+        {seedPhrase.length === 0 ? (
+          <div className="flex items-center justify-center">
+            <Spinner size="l" className="text-[#55B146]" />
+          </div>
+        ) : (
+          <div className="flex flex-col gap-[5px]">
+            <div className="grid grid-cols-3 gap-[5px] text-center text-white">
+              {seedPhrase.map((word, index) => (
+                <span
+                  className="bg-[#242922] h-[38px] p-[10px] rounded-[8px] text-white"
+                  key={index}
+                >
+                  {word}
+                </span>
+              ))}
+            </div>
+            <Button
+              onClick={() => copyToClipboard(seedPhrase.join(" "))}
+              size="m"
+              stretched
+              style={{
+                backgroundColor: "#242922",
+                border: "none",
+              }}
+              className="text-white"
+              after={<CopyIcon className="text-[#BEBEBE] absolute right-4" />}
+            >
+              {t("common.copy")}
+            </Button>
+          </div>
+        )}
       </section>
     </div>
   );
